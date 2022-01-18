@@ -6,5 +6,5 @@ CO2 and volatile organic compounds measurement using IoT sensors and Raspberry P
 - co2
 
 ## JSON format:
-- { 'device_id' : <id>, 'voc' : <float> }
-- { 'device_id' : <id>, 'co2' : <float> }
+- { ‘device_name’ : (name), ‘co2’: (int), ‘voc’ : (int) }
+- { ‘device_name’ : (name), ‘temp’: (float), ‘rh’ : (float) } 
