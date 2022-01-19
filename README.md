@@ -8,8 +8,8 @@ CO2 and volatile organic compounds measurement using IoT sensors and Raspberry P
 - rh
 
 ## JSON format:
-- { ‘device_name’ : (string), ‘co2’: (int), ‘voc’ : (int) }
-- { ‘device_name’ : (string), ‘temp’: (float), ‘rh’ : (float) } 
+- { ‘device_name’ : (string), ‘time’: (timestamp), ‘co2’: (int), ‘voc’ : (int) }
+- { ‘device_name’ : (string), ‘time’: (timestamp), ‘temp’: (float), ‘rh’ : (float) } 
 
 ## Ranges and units
 - VOC:     0  - 60,000           [ppb] 
