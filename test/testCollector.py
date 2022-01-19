@@ -1,22 +1,23 @@
-import random, time, datetime, json
+import random, time, datetime, json, os
+from multiprocessing import Pipe
 
-def print_co2_and_voc_json(measurement):
+def get_co2_and_voc_json(measurement):
     value = {
         "device_name": "sgp30",
         "time": datetime.datetime.now().isoformat(),
         "co2": measurement[0],
         "voc": measurement[1]
     }
-    print(json.dumps(value))
+    return json.dumps(value)
 
-def print_temp_and_rh_json(measurement):
+def get_temp_and_rh_json(measurement):
     value = {
         "device_name": "sgp30",
         "time": datetime.datetime.now().isoformat(),
         "temp": round(measurement[0], 2),
         "rh": round(measurement[1], 2)
     }
-    print(json.dumps(value))
+    return json.dumps(value)
 
 
 def get_co2_and_voc_value():
@@ -32,13 +33,32 @@ def get_temp_and_rh_value():
     return (temp, rh)
 
 
-def main():
+def handleMqtt(conn_recv):
+    while True:
+        measurement_json = conn_recv.recv()
+        print(measurement_json)
+
+def measure(conn_send):
     while True:
         measurement = get_co2_and_voc_value()
-        print_co2_and_voc_json(measurement)
+        measurement_json = get_co2_and_voc_json(measurement)
+        #print(measurement_json)
+        conn_send.send(measurement_json)
 
         measurement = get_temp_and_rh_value()
-        print_temp_and_rh_json(measurement)
+        measurement_json = get_temp_and_rh_json(measurement)
+        #print(measurement_json)
+        conn_send.send(measurement_json)
+
+
+def main():
+    conn_recv, conn_send = Pipe()
+
+    pid = os.fork()
+    if pid == 0:
+        handleMqtt(conn_recv)
+    else:
+        measure(conn_send)
 
 
 if __name__ == '__main__':
