@@ -2,6 +2,7 @@
 
 import smbus
 import time
+import datetime
 import json
 
 bus = smbus.SMBus(1)
@@ -76,6 +77,7 @@ def test_of_shtc1(measurement):
 def print_co2_and_voc_json(measurement):
     value = {
         "device_name": "sgp30",
+        "time": datetime.datetime.now().isoformat(),
         "co2": measurement[0],
         "voc": measurement[1]
     }
@@ -85,6 +87,7 @@ def print_co2_and_voc_json(measurement):
 def print_temp_and_rh_json(measurement):
     value = {
         "device_name": "sgp30",
+        "time": datetime.datetime.now().isoformat(),
         "temp": round(measurement[0], 2),
         "rh": round(measurement[1], 2)
     }
