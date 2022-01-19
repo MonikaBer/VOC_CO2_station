@@ -16,3 +16,8 @@ CO2 and volatile organic compounds measurement using IoT sensors and Raspberry P
 - CO2:    400 - 60,000           [ppm] 
 - TEMP:   -20 – 85      (+/- 1)  [°C]
 - RH:      0  - 100     (+/- 5)  [% relative humidity]  
+
+# Usage
+```
+pip install paho-mqtt
+```
