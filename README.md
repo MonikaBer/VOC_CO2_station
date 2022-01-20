@@ -18,7 +18,7 @@ CO2 and volatile organic compounds measurement using IoT sensors and Raspberry P
 - RH:      0  - 100     (+/- 5)  [% relative humidity]
 
 # Usage
-Install mqtt client.
+Install mqtt client:
 ```
 pip install paho-mqtt
 ```
