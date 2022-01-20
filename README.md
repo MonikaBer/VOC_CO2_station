@@ -39,10 +39,10 @@ mosquitto -p 1850
 
 Start publisher:
 ```{python3.8}
-python pub_client.py
+python svm30Collector.py
 ```
 
 Start subscriber:
 ```{python3.8}
-python sub_client.py
+python receiver.py
 ```
