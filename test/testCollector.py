@@ -1,10 +1,9 @@
-import random, time, datetime, json, os
+import random, time, json, os
 from multiprocessing import Pipe
 
 def get_co2_and_voc_json(measurement):
     value = {
         "device_name": "sgp30",
-        "time": datetime.datetime.now().isoformat(),
         "co2": measurement[0],
         "voc": measurement[1]
     }
@@ -13,7 +12,6 @@ def get_co2_and_voc_json(measurement):
 def get_temp_and_rh_json(measurement):
     value = {
         "device_name": "sgp30",
-        "time": datetime.datetime.now().isoformat(),
         "temp": round(measurement[0], 2),
         "rh": round(measurement[1], 2)
     }
