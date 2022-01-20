@@ -3,10 +3,7 @@
 ###############################################################################
 #  Script for asynchronous reading from sensors and publishing data via MQTT  #
 ###############################################################################
-import smbus
-import time
-import json
-import os
+import smbus, time, json, os, argparse
 from multiprocessing import Pipe
 from mqtt import connect_mqtt
 
@@ -106,7 +103,7 @@ def test_of_shtc1(measurement):
     print("RH = {:0.2f}%\n".format(measurement[1]))
 
 
-def publish(client, conn_recv):
+def publish(client, conn_recv, topic_base):
     while True:
         measurement_json = conn_recv.recv()
         #print(measurement_json)
@@ -121,12 +118,12 @@ def publish(client, conn_recv):
             topic = "rh"
         else:
             pass
-        client.publish(topic = topic, payload = measurement_json)
+        client.publish(topic = topic_base + topic, payload = measurement_json)
 
-def handle_mqtt(conn_recv):
-    client = connect_mqtt("client_1")
+def handle_mqtt(args, conn_recv):
+    client = connect_mqtt(args.host, args.client_id)
     client.loop_start()
-    publish(client, conn_recv)
+    publish(client, conn_recv, args.topic_base)
 
 
 def measure(conn_send):
@@ -151,6 +148,15 @@ def measure(conn_send):
 
 
 def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--host', type = str, required = True,
+                        help = 'Broker MQTT host (ip:port)')
+    parser.add_argument('--client_id', type = str, required = True,
+                        help = 'Client id (unique name)')
+    parser.add_argument('--topic_base', type = str, required = False, default = 'svm30/',
+                        help = 'Topic base')
+    args = parser.parse_args()
+
     # Initialization of SGP30 sensor
     init_sgp30()
 
@@ -158,7 +164,7 @@ def main():
 
     pid = os.fork()
     if pid == 0:
-        handle_mqtt(conn_recv)
+        handle_mqtt(args, conn_recv)
     else:
         measure(conn_send)
 
