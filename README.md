@@ -8,8 +8,10 @@ CO2 and volatile organic compounds measurement using IoT sensors and Raspberry P
 - rh
 
 ## JSON format:
-- { ‘device_name’ : (string), ‘co2’: (int), ‘voc’ : (int) }
-- { ‘device_name’ : (string), ‘temp’: (float), ‘rh’ : (float) }
+- { ‘device_name’ : (string), ‘co2’: (int) }
+- { ‘device_name’ : (string), ‘voc’ : (int) }
+- { ‘device_name’ : (string), ‘temp’: (float) }
+- { ‘device_name’ : (string), ‘rh’ : (float) }
 
 ## Ranges and units
 - VOC:     0  - 60,000           [ppb]
@@ -39,10 +41,10 @@ mosquitto -p 1850
 
 Start publisher:
 ```{python3.8}
-python svm30Collector.py
+python svm30Collector.py --port 1850 --client_id client_pub_1 --topic_base svm30/
 ```
 
 Start subscriber:
 ```{python3.8}
-python receiver.py
+python receiver.py --port 1850 --client_id client_sub_1 --topic_base svm30/
 ```
