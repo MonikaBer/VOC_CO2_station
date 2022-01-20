@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 
+###############################################################################
+#  Script for asynchronous reading from sensors and publishing data via MQTT  #
+###############################################################################
 import smbus
 import time
-import datetime
 import json
+import os
+from multiprocessing import Pipe
+from mqtt import connect_mqtt
 
 bus = smbus.SMBus(1)
 
@@ -41,7 +46,6 @@ def init_sgp30():
     bus.write_i2c_block_data(address_sgp30, 0x20, [0x03])
     time.sleep(.5)
 
-
 def measure_co2_and_voc():
     bus.write_i2c_block_data(address_sgp30, 0x20, [0x08])
     time.sleep(.6)
@@ -49,8 +53,7 @@ def measure_co2_and_voc():
     time.sleep(.8)
     co2 = value[0] * 256 + value[1]
     voc = value[3] * 256 + value[4]
-    return [co2, voc]
-
+    return (co2, voc)
 
 def measure_temp_and_rh():
     bus.write_i2c_block_data(address_shtc1, 0x78, [0x66])
@@ -61,7 +64,36 @@ def measure_temp_and_rh():
     rh_byte_value = value[3] * 256 + value[4]
     temp = -45.68 + 175.7 * temp_byte_value / (2 ** 16)
     rh = (103.7 - 3.2 * (temp_byte_value / (2 ** 16))) * rh_byte_value / (2 ** 16)
-    return [temp, rh]
+    return (temp, rh)
+
+
+def get_co2_json(co2):
+    value = {
+        "device_name": "sgp30",
+        "co2": co2
+    }
+    return json.dumps(value)
+
+def get_voc_json(voc):
+    value = {
+        "device_name": "sgp30",
+        "voc": voc
+    }
+    return json.dumps(value)
+
+def get_temp_json(temp):
+    value = {
+        "device_name": "sgp30",
+        "temp": round(temp, 2)
+    }
+    return json.dumps(value)
+
+def get_rh_json(rh):
+    value = {
+        "device_name": "sgp30",
+        "rh": round(rh, 2)
+    }
+    return json.dumps(value)
 
 
 def test_of_sgp30(measurement):
@@ -74,38 +106,62 @@ def test_of_shtc1(measurement):
     print("RH = {:0.2f}%\n".format(measurement[1]))
 
 
-def print_co2_and_voc_json(measurement):
-    value = {
-        "device_name": "sgp30",
-        "time": datetime.datetime.now().isoformat(),
-        "co2": measurement[0],
-        "voc": measurement[1]
-    }
-    print(json.dumps(value))
+def publish(client, conn_recv):
+    while True:
+        measurement_json = conn_recv.recv()
+        #print(measurement_json)
+        measurement = json.loads(measurement_json)
+        if "co2" in measurement:
+            topic = "co2"
+        elif "voc" in measurement:
+            topic = "voc"
+        elif "temp" in measurement:
+            topic = "temp"
+        elif "rh" in measurement:
+            topic = "rh"
+        else:
+            pass
+        client.publish(topic = topic, payload = measurement_json)
+
+def handle_mqtt(conn_recv):
+    client = connect_mqtt("client_1")
+    client.loop_start()
+    publish(client, conn_recv)
 
 
-def print_temp_and_rh_json(measurement):
-    value = {
-        "device_name": "sgp30",
-        "time": datetime.datetime.now().isoformat(),
-        "temp": round(measurement[0], 2),
-        "rh": round(measurement[1], 2)
-    }
-    print(json.dumps(value))
+def measure(conn_send):
+    while True:
+        # Measurement of CO2 and VOC
+        measurement = measure_co2_and_voc()
+        co2_json = get_co2_json(measurement[0])
+        voc_json = get_voc_json(measurement[1])
+        #print(co2_json)
+        #print(voc_json)
+        conn_send.send(co2_json)
+        conn_send.send(voc_json)
+
+        # Additional measurement of temperature and relative humidity
+        measurement = measure_temp_and_rh()
+        temp_json = get_temp_json(measurement[0])
+        rh_json = get_rh_json(measurement[1])
+        #print(temp_json)
+        #print(rh_json)
+        conn_send.send(temp_json)
+        conn_send.send(rh_json)
 
 
 def main():
     # Initialization of SGP30 sensor
     init_sgp30()
 
-    while True:
-        # Measurement of CO2 and VOC
-        value = measure_co2_and_voc()
-        print_co2_and_voc_json(value)
-        # Additional measurement of temperature and relative humidity
-        value = measure_temp_and_rh()
-        print_temp_and_rh_json(value)
+    conn_recv, conn_send = Pipe()
+
+    pid = os.fork()
+    if pid == 0:
+        handle_mqtt(conn_recv)
+    else:
+        measure(conn_send)
 
 
-if __name__ == "__main__":
-    main()
+if __name__ == '__main__':
+    exit(main())
