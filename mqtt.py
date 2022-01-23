@@ -18,6 +18,7 @@ def connect_mqtt(host, client_id):
         raise RuntimeError('\nWrong host format!\n')
 
     try:
+        print(f'Try to connect to MQTT Broker, address: {address}, port: {port}')
         client.connect(address, port = port, keepalive = 60)
     except:
         raise RuntimeError('\nConnection error! Check address and port.\n')
