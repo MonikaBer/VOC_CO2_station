@@ -21,9 +21,15 @@ CO2 and volatile organic compounds measurement using IoT sensors and Raspberry P
 
 # Configuration
 MQTT broker:
+Install Mosquitto:
 ```
 sudo apt-get install mosquitto
-systemctl status mosquitto
+```
+
+Add configuration to the end of /etc/mosquitto/mosquitto.conf file:
+```
+listener 1850 0.0.0.0
+allow_anonymous true
 ```
 
 MQTT clients:
@@ -34,17 +40,17 @@ export PYTHONPATH
 ```
 
 # Usage
-Start MQTT Broker:
+1. Start Mosquitto MQTT Broker:
 ```
-mosquitto -p 1850
+sudo service mosquitto start
 ```
 
-Start publisher:
+2. Start publisher:
 ```{python3.8}
 python svm30Collector.py --host <ip>:1850 --client_id client_pub_1 --topic_base svm30/
 ```
 
-Start subscriber:
+3. Start subscriber:
 ```{python3.8}
 python receiver.py --host <ip>:1850 --client_id client_sub_1 --topic_base svm30/
 ```
