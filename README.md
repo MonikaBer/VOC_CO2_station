@@ -28,7 +28,7 @@ Install Mosquitto:
 sudo apt-get install mosquitto
 ```
 
-Add configuration to the end of /etc/mosquitto/mosquitto.conf file:
+Add configuration to the end of _**/etc/mosquitto/mosquitto.conf**_ file:
 ```
 listener 1850 0.0.0.0
 allow_anonymous true
