@@ -20,7 +20,9 @@ CO2 and volatile organic compounds measurement using IoT sensors and Raspberry P
 - RH:      0  - 100     (+/- 5)  [% relative humidity]
 
 # Configuration
-MQTT broker:
+
+1. MQTT Broker
+
 Install Mosquitto:
 ```
 sudo apt-get install mosquitto
@@ -32,7 +34,8 @@ listener 1850 0.0.0.0
 allow_anonymous true
 ```
 
-MQTT clients:
+2. MQTT clients
+
 ```
 pip install paho-mqtt
 PYTHONPATH=$PYTHONPATH:<path_to_project_workdir/.
