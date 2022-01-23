@@ -66,28 +66,28 @@ def measure_temp_and_rh():
 
 def get_co2_json(co2):
     value = {
-        "device_name": "sgp30",
+        "device_name": "svm30",
         "co2": co2
     }
     return json.dumps(value)
 
 def get_voc_json(voc):
     value = {
-        "device_name": "sgp30",
+        "device_name": "svm30",
         "voc": voc
     }
     return json.dumps(value)
 
 def get_temp_json(temp):
     value = {
-        "device_name": "sgp30",
+        "device_name": "svm30",
         "temp": round(temp, 2)
     }
     return json.dumps(value)
 
 def get_rh_json(rh):
     value = {
-        "device_name": "sgp30",
+        "device_name": "svm30",
         "rh": round(rh, 2)
     }
     return json.dumps(value)
