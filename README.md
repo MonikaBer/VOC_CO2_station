@@ -37,8 +37,8 @@ allow_anonymous true
 2. MQTT clients
 
 ```
-pip install paho-mqtt
-PYTHONPATH=$PYTHONPATH:<path_to_project_workdir/.
+pip3 install paho-mqtt
+PYTHONPATH=$PYTHONPATH:/path/to/project/workdir/.
 export PYTHONPATH
 ```
 
@@ -48,9 +48,9 @@ export PYTHONPATH
 sudo service mosquitto start
 ```
 
-2. Start publisher:
+2. Start publisher on Raspberry Pi:
 ```{python3.8}
-python svm30Collector.py --host <ip>:1850 --client_id client_pub_1 --topic_base svm30/
+python3 svm30Collector.py --host <ip>:1850 --client_id client_pub_1 --topic_base svm30/
 ```
 
 3. Start subscriber:

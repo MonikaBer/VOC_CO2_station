@@ -21,10 +21,10 @@ Measure_air_quality = 0x2008
 # Important informations about SGP30:
 # The sensor responds with 2 data bytes (MSB first) and 1
 # CRC byte for each of the two preprocessed air quality signals in the order CO2eq (ppm) and TVOC (ppb).
-# For the first 15s after the “Init_air_quality” command the sensor is in an
-# initialization phase during which a “Measure_air_quality”
+# For the first 15s after the Init_air_quality command the sensor is in an
+# initialization phase during which a Measure_air_quality
 # command returns fixed values of 400 ppm CO2eq and 0 ppb TVOC.
-# A new “Init_air_quality” command has to be sent after every power-up or soft reset.
+# A new Init_air_quality command has to be sent after every power-up or soft reset.
 
 Measure_raw_signals = 0x2050
 Get_baseline = 0x2015
@@ -106,7 +106,6 @@ def test_of_shtc1(measurement):
 def publish(client, conn_recv, topic_base):
     while True:
         measurement_json = conn_recv.recv()
-        #print(measurement_json)
         measurement = json.loads(measurement_json)
         if "co2" in measurement:
             topic = "co2"
