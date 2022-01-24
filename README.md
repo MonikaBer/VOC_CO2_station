@@ -2,13 +2,15 @@
 CO2 and volatile organic compounds measurement using IoT sensors and Raspberry Pi.
 
 ## MQTT topics:
-- voc
 - co2
+- voc
+- co2eq
 - temp
 - rh
 
 ## JSON format:
-- { ‘device_name’ : (string), ‘co2’: (int) }
+- { ‘device_name’ : (string), ‘co2’ : (float) }
+- { ‘device_name’ : (string), ‘co2eq’: (int) }
 - { ‘device_name’ : (string), ‘voc’ : (int) }
 - { ‘device_name’ : (string), ‘temp’: (float) }
 - { ‘device_name’ : (string), ‘rh’ : (float) }
