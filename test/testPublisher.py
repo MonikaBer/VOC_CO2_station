@@ -4,38 +4,50 @@ from mqtt import connect_mqtt
 
 def get_co2_json(co2):
     value = {
-        "device_name": "sgp30",
+        "device_name": "scd30",
         "co2": co2
+    }
+    return json.dumps(value)
+
+def get_co2eq_json(co2eq):
+    value = {
+        "device_name": "svm30",
+        "co2eq": co2eq
     }
     return json.dumps(value)
 
 def get_voc_json(voc):
     value = {
-        "device_name": "sgp30",
+        "device_name": "svm30",
         "voc": voc
     }
     return json.dumps(value)
 
 def get_temp_json(temp):
     value = {
-        "device_name": "sgp30",
+        "device_name": "svm30",
         "temp": round(temp, 2)
     }
     return json.dumps(value)
 
 def get_rh_json(rh):
     value = {
-        "device_name": "sgp30",
+        "device_name": "svm30",
         "rh": round(rh, 2)
     }
     return json.dumps(value)
 
 
-def measure_co2_and_voc():
-    co2 = random.randint(400, 60000)
+def measure_co2():
+    co2 = random.uniform(400, 60000)
+    time.sleep(.5)
+    return co2
+
+def measure_co2eq_and_voc():
+    co2eq = random.randint(400, 60000)
     voc = random.randint(0, 60000)
     time.sleep(.5)
-    return (co2, voc)
+    return (co2eq, voc)
 
 def measure_temp_and_rh():
     temp = random.uniform(-20.0, 85.0)
@@ -43,37 +55,44 @@ def measure_temp_and_rh():
     time.sleep(.5)
     return (temp, rh)
 
-def publish(client, conn_recv, topic_base):
+def publish(client, conn_recv):
     while True:
         measurement_json = conn_recv.recv()
         #print(measurement_json)
         measurement = json.loads(measurement_json)
         if "co2" in measurement:
-            topic = "co2"
+            topic = "scd30/co2"
+        if "co2eq" in measurement:
+            topic = "svm30/co2eq"
         elif "voc" in measurement:
-            topic = "voc"
+            topic = "svm30/voc"
         elif "temp" in measurement:
-            topic = "temp"
+            topic = "svm30/temp"
         elif "rh" in measurement:
-            topic = "rh"
+            topic = "svm30/rh"
         else:
             pass
-        client.publish(topic = topic_base + topic, payload = measurement_json)
+        client.publish(topic = topic, payload = measurement_json)
 
 def handle_mqtt(args, conn_recv):
     client = connect_mqtt(args.host, args.client_id)
     client.loop_start()
-    publish(client, conn_recv, args.topic_base)
+    publish(client, conn_recv)
 
 
 def measure(conn_send):
     while True:
-        measurement = measure_co2_and_voc()
-        co2_json = get_co2_json(measurement[0])
-        voc_json = get_voc_json(measurement[1])
+        measurement = measure_co2()
+        co2_json = get_co2_json(measurement)
         #print(co2_json)
-        #print(voc_json)
         conn_send.send(co2_json)
+
+        measurement = measure_co2eq_and_voc()
+        co2eq_json = get_co2eq_json(measurement[0])
+        voc_json = get_voc_json(measurement[1])
+        #print(co2eq_json)
+        #print(voc_json)
+        conn_send.send(co2eq_json)
         conn_send.send(voc_json)
 
         measurement = measure_temp_and_rh()
@@ -91,8 +110,6 @@ def main():
                         help = 'Broker MQTT host (ip:port)')
     parser.add_argument('--client_id', type = str, required = True,
                         help = 'Client id (unique name)')
-    parser.add_argument('--topic_base', type = str, required = False, default = 'svm30/',
-                        help = 'Topic base')
     args = parser.parse_args()
 
     conn_recv, conn_send = Pipe()
