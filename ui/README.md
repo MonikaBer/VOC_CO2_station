@@ -16,8 +16,8 @@ node-red-start
 2. Go to http://127.0.0.1:1880/ and import the flow from flows.json
 
 3. Configure the MQTT node to match your MQTT sever address and credentials (if needed)
-![MQTT node config](mqtt-node.png)
-![MQTT connection config](mqtt-broker-connection.png)
+![MQTT node config](../doc/mqtt-node.png)
+![MQTT connection config](../doc/mqtt-broker-connection.png)
 
 4. Deploy imnported flow
 
