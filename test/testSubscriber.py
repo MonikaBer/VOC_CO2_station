@@ -6,10 +6,12 @@ def subscribe(client, topic_base):
     def on_message(client, userdata, msg):
         print(f"Payload: {msg.payload.decode()}, topic: {msg.topic}")
 
-    client.subscribe(topic_base + "co2")
-    client.subscribe(topic_base + "voc")
-    client.subscribe(topic_base + "temp")
-    client.subscribe(topic_base + "rh")
+    client.subscribe(topic_base + "scd30/co2")
+
+    client.subscribe(topic_base + "svm30/co2eq")
+    client.subscribe(topic_base + "svm30/voc")
+    client.subscribe(topic_base + "svm30/temp")
+    client.subscribe(topic_base + "svm30/rh")
     client.on_message = on_message
 
 
@@ -19,8 +21,6 @@ def main():
                         help = 'Broker MQTT host (ip:port)')
     parser.add_argument('--client_id', type = str, required = True,
                         help = 'Client id (unique name)')
-    parser.add_argument('--topic_base', type = str, required = False, default = 'svm30/',
-                        help = 'Topic base')
     args = parser.parse_args()
 
 

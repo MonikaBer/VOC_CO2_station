@@ -67,7 +67,7 @@ def measure_temp_and_rh():
 def get_co2_json(co2):
     value = {
         "device_name": "svm30",
-        "co2": co2
+        "co2eq": co2
     }
     return json.dumps(value)
 
@@ -94,7 +94,7 @@ def get_rh_json(rh):
 
 
 def test_of_sgp30(measurement):
-    print("CO2 = {0} ppm".format(measurement[0]))
+    print("CO2eq = {0} ppm".format(measurement[0]))
     print("VOC = {0} ppb\n".format(measurement[1]))
 
 
@@ -107,8 +107,8 @@ def publish(client, conn_recv, topic_base):
     while True:
         measurement_json = conn_recv.recv()
         measurement = json.loads(measurement_json)
-        if "co2" in measurement:
-            topic = "co2"
+        if "co2eq" in measurement:
+            topic = "co2eq"
         elif "voc" in measurement:
             topic = "voc"
         elif "temp" in measurement:
