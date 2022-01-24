@@ -2,16 +2,16 @@ import argparse
 from mqtt import connect_mqtt
 
 
-def subscribe(client, topic_base):
+def subscribe(client):
     def on_message(client, userdata, msg):
         print(f"Payload: {msg.payload.decode()}, topic: {msg.topic}")
 
-    client.subscribe(topic_base + "scd30/co2")
+    client.subscribe("scd30/co2")
 
-    client.subscribe(topic_base + "svm30/co2eq")
-    client.subscribe(topic_base + "svm30/voc")
-    client.subscribe(topic_base + "svm30/temp")
-    client.subscribe(topic_base + "svm30/rh")
+    client.subscribe("svm30/co2eq")
+    client.subscribe("svm30/voc")
+    client.subscribe("svm30/temp")
+    client.subscribe("svm30/rh")
     client.on_message = on_message
 
 
@@ -25,7 +25,7 @@ def main():
 
 
     client = connect_mqtt(args.host, args.client_id)
-    subscribe(client, args.topic_base)
+    subscribe(client)
     client.loop_forever()
 
 
