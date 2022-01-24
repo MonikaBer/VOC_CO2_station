@@ -20,6 +20,6 @@ node-red-start
 ![MQTT node config](./doc/mqtt-svm30-node.png)
 ![MQTT connection config](./doc/mqtt-broker-connection.png)
 
-4. Deploy imnported flow
+4. Deploy imported flow
 
 5. Now you should see the UI at http://localhost:1880/ui
