@@ -11,7 +11,7 @@
         "id": "cf2fec841c0471dc",
         "type": "mqtt in",
         "z": "3b0b5d4dc5e89183",
-        "name": "TestMQTT",
+        "name": "MQTT svm30",
         "topic": "svm30/+",
         "qos": "2",
         "datatype": "json",
@@ -20,7 +20,7 @@
         "rap": true,
         "rh": 0,
         "inputs": 0,
-        "x": 190,
+        "x": 210,
         "y": 100,
         "wires": [
             [
@@ -77,13 +77,13 @@
         "id": "d3deab70d2fdef79",
         "type": "change",
         "z": "3b0b5d4dc5e89183",
-        "name": "extract CO2",
+        "name": "extract CO2 eq",
         "rules": [
             {
                 "t": "set",
                 "p": "payload",
                 "pt": "msg",
-                "to": "payload.co2",
+                "to": "payload.co2eq",
                 "tot": "msg"
             }
         ],
@@ -92,7 +92,7 @@
         "from": "",
         "to": "",
         "reg": false,
-        "x": 450,
+        "x": 460,
         "y": 180,
         "wires": [
             [
@@ -264,7 +264,7 @@
         "width": 0,
         "height": 0,
         "gtype": "gage",
-        "title": "CO2",
+        "title": "CO2 [SVM30]",
         "label": "ppm",
         "format": "{{value}}",
         "min": "0",
@@ -531,7 +531,7 @@
         "order": 1,
         "width": 0,
         "height": 0,
-        "label": "CO2",
+        "label": "CO2 [SVM30]",
         "chartType": "line",
         "legend": "false",
         "xformat": "HH:mm:ss",
@@ -560,7 +560,7 @@
         "outputs": 1,
         "useDifferentColor": false,
         "className": "",
-        "x": 790,
+        "x": 820,
         "y": 220,
         "wires": [
             []
@@ -611,24 +611,220 @@
         ]
     },
     {
-        "id": "cb57dcba10090856",
-        "type": "ui_spacer",
+        "id": "47836605d4fb0a1e",
+        "type": "mqtt in",
         "z": "3b0b5d4dc5e89183",
-        "name": "spacer",
-        "group": "f0e49e33f38822a7",
-        "order": 1,
-        "width": 7,
-        "height": 1
+        "name": "MQTT scd30",
+        "topic": "scd30/+",
+        "qos": "2",
+        "datatype": "json",
+        "broker": "61073b4d6c77fc71",
+        "nl": false,
+        "rap": true,
+        "rh": 0,
+        "inputs": 0,
+        "x": 210,
+        "y": 660,
+        "wires": [
+            [
+                "c25024992bf00e38",
+                "95d9304a19155e8c"
+            ]
+        ]
     },
     {
-        "id": "8ad1ef0b573e7e03",
-        "type": "ui_spacer",
+        "id": "bb68423c34045839",
+        "type": "switch",
         "z": "3b0b5d4dc5e89183",
-        "name": "spacer",
-        "group": "caf9d9e57a445f58",
+        "name": "filter not null",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "nnull"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 510,
+        "y": 760,
+        "wires": [
+            [
+                "ebff9a32708387e7"
+            ]
+        ]
+    },
+    {
+        "id": "c25024992bf00e38",
+        "type": "change",
+        "z": "3b0b5d4dc5e89183",
+        "name": "extract CO2",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "payload.co2",
+                "tot": "msg"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 330,
+        "y": 760,
+        "wires": [
+            [
+                "bb68423c34045839"
+            ]
+        ]
+    },
+    {
+        "id": "68bb312cdd27ec7e",
+        "type": "ui_gauge",
+        "z": "3b0b5d4dc5e89183",
+        "name": "CO2 level [ppm]",
+        "group": "850f1fbaa86e7f1c",
+        "order": 2,
+        "width": 0,
+        "height": 0,
+        "gtype": "gage",
+        "title": "CO2 [SCD30]",
+        "label": "ppm",
+        "format": "{{value}}",
+        "min": "0",
+        "max": "60000",
+        "colors": [
+            "#00b500",
+            "#e6e600",
+            "#ca3838"
+        ],
+        "seg1": "1000",
+        "seg2": "2000",
+        "className": "",
+        "x": 980,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "303103627b25e88c",
+        "type": "function",
+        "z": "3b0b5d4dc5e89183",
+        "name": "CO2 to air quality",
+        "func": "const co2 = msg.payload;\nconsole.log(msg);\nif (co2 < 400) {\nmsg.payload = \"Excellent\";\nreturn msg;\n}\nelse if (co2 < 1000) {\nmsg.payload = \"Fine\"\nreturn msg;\n}\nelse if (co2 < 1500) {\nmsg.payload = \"Moderate\"\nreturn msg;\n}\nelse if (co2 < 2000) {\nmsg.payload = \"Poor\"\nreturn msg;\n}\nelse if (co2 < 5000) {\nmsg.payload = \"Very poor\"\nreturn msg;\n}\nelse {\nmsg.payload = \"Severe\"\nreturn msg;\n}",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1150,
+        "y": 740,
+        "wires": [
+            [
+                "947c58beedb9fee7"
+            ]
+        ]
+    },
+    {
+        "id": "8d72e5cf64c33998",
+        "type": "ui_chart",
+        "z": "3b0b5d4dc5e89183",
+        "name": "",
+        "group": "50a24039e101d11d",
         "order": 1,
-        "width": 7,
-        "height": 1
+        "width": 0,
+        "height": 0,
+        "label": "CO2 [SCD30]",
+        "chartType": "line",
+        "legend": "false",
+        "xformat": "HH:mm:ss",
+        "interpolate": "linear",
+        "nodata": "",
+        "dot": false,
+        "ymin": "0",
+        "ymax": "60000",
+        "removeOlder": 1,
+        "removeOlderPoints": "",
+        "removeOlderUnit": "3600",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": false,
+        "colors": [
+            "#1f77b4",
+            "#aec7e8",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "useDifferentColor": false,
+        "className": "",
+        "x": 900,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "947c58beedb9fee7",
+        "type": "ui_text",
+        "z": "3b0b5d4dc5e89183",
+        "group": "850f1fbaa86e7f1c",
+        "order": 1,
+        "width": 0,
+        "height": 0,
+        "name": "",
+        "label": "CO2 level rating:",
+        "format": "{{msg.payload}}",
+        "layout": "row-left",
+        "className": "",
+        "x": 1290,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "95d9304a19155e8c",
+        "type": "debug",
+        "z": "3b0b5d4dc5e89183",
+        "name": "",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 470,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "ebff9a32708387e7",
+        "type": "function",
+        "z": "3b0b5d4dc5e89183",
+        "name": "Round",
+        "func": "msg.payload = Math.round(msg.payload)\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 760,
+        "wires": [
+            [
+                "68bb312cdd27ec7e",
+                "8d72e5cf64c33998",
+                "303103627b25e88c"
+            ]
+        ]
     },
     {
         "id": "90ff5b5e7f6c15d7",
@@ -661,6 +857,26 @@
         "height": 1
     },
     {
+        "id": "c710ee0b9fa19ce2",
+        "type": "ui_spacer",
+        "z": "3b0b5d4dc5e89183",
+        "name": "spacer",
+        "group": "f0e49e33f38822a7",
+        "order": 1,
+        "width": 7,
+        "height": 1
+    },
+    {
+        "id": "8cee501fe12c57de",
+        "type": "ui_spacer",
+        "z": "3b0b5d4dc5e89183",
+        "name": "spacer",
+        "group": "caf9d9e57a445f58",
+        "order": 1,
+        "width": 7,
+        "height": 1
+    },
+    {
         "id": "61073b4d6c77fc71",
         "type": "mqtt-broker",
         "name": "TestMQTTBroker",
@@ -689,11 +905,11 @@
     {
         "id": "ae6bf779cfc80f42",
         "type": "ui_group",
-        "name": "CO2 measurments",
+        "name": "CO2 measurments [SVM30]",
         "tab": "0f8801b11d2b2fd8",
         "order": 1,
         "disp": true,
-        "width": 10,
+        "width": "10",
         "collapse": true,
         "className": ""
     },
@@ -702,7 +918,7 @@
         "type": "ui_group",
         "name": "VOC measurments",
         "tab": "0f8801b11d2b2fd8",
-        "order": 2,
+        "order": 3,
         "disp": true,
         "width": 10,
         "collapse": true,
@@ -713,7 +929,7 @@
         "type": "ui_group",
         "name": "Temerature measurments",
         "tab": "0f8801b11d2b2fd8",
-        "order": 3,
+        "order": 4,
         "disp": true,
         "width": "7",
         "collapse": true,
@@ -724,7 +940,7 @@
         "type": "ui_group",
         "name": "Humidity mesurments",
         "tab": "0f8801b11d2b2fd8",
-        "order": 4,
+        "order": 5,
         "disp": true,
         "width": "7",
         "collapse": true,
@@ -738,6 +954,17 @@
         "order": 1,
         "disp": false,
         "width": 15,
+        "collapse": false,
+        "className": ""
+    },
+    {
+        "id": "850f1fbaa86e7f1c",
+        "type": "ui_group",
+        "name": "CO2 measurements [SCD30]",
+        "tab": "0f8801b11d2b2fd8",
+        "order": 2,
+        "disp": true,
+        "width": "10",
         "collapse": false,
         "className": ""
     },
