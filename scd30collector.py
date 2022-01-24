@@ -35,7 +35,7 @@ def measure_co2():
     buffer = [data[0], data[1], data[3], data[4]]
     buffer_byte_array = bytearray(buffer)
     measurement = struct.unpack('>f', buffer_byte_array)
-    return measurement
+    return measurement[0]
 
 
 def get_co2_json(co2):
