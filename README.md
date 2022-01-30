@@ -20,7 +20,7 @@ CO2 and volatile organic compounds measurement using IoT sensors and Raspberry P
 - CO2eq:  400 - 60,000           [ppm]
 - TEMP:   -20 –   85    (+/- 1)  [°C]
 - RH:      0  -  100    (+/- 5)  [% relative humidity]
-- CO2:     0  - 40,000           [ppm]
+- CO2:     0  - 40,000  (+/- 30) [ppm]
 
 # Configuration
 
