@@ -58,5 +58,5 @@ python3 svm30Collector.py --host <ip>:1850 --client_id client_pub_1 --topic_base
 
 3. Start subscriber:
 ```{python3.8}
-python receiver.py --host <ip>:1850 --client_id client_sub_1
+python test/testSubscriber.py --host <ip>:1850 --client_id client_sub_1
 ```
