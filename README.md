@@ -53,8 +53,8 @@ sudo service mosquitto start
 
 2. Start publishers on Raspberry Pi:
 ```{python3.8}
-python3 svm30Collector.py --host <ip>:1850 --client_id client_pub_1 --topic_base svm30/
-python3 scd30Collector.py --host <ip>:1850 --client_id client_pub_2 --topic_base scd30/
+python3 svm30collector.py --host <ip>:1850 --client_id client_pub_1 --topic_base svm30/
+python3 scd30collector.py --host <ip>:1850 --client_id client_pub_2 --topic_base scd30/
 ```
 
 3. Start subscriber:
